@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Management App</title>
+  <link rel="stylesheet" href="second.css">
+</head>
+<body>
+<div id="app">
+  <h1>Task Management App</h1>
+
+  <div>
+    <!-- Form for adding new tasks -->
+    <form @submit.prevent="addTask">
+      <label>Title: <input v-model="newTask.title" /></label>
+      <label>
+        Completed:
+        <input type="checkbox" v-model="newTask.completed" />
+      </label>
+      <button type="submit">Add Task</button>
+    </form>
+  </div>
+
+  <div>
+    <!-- Task List -->
+    <h2>Task List</h2>
+    <div v-for="task in filteredTasks" :key="task.id">
+      <p :class="{ completed: task.completed }">
+        {{ task.title }}
+        <span @click="toggleCompletion(task.id)">
+            {{ task.completed ? ' (Completed)' : ' (Incomplete)' }}
+          </span>
+      </p>
+    </div>
+  </div>
+
+  <div>
+    <!-- Task Summary -->
+    <h2>Task Summary</h2>
+    <p>Total Tasks: {{ tasks.length }}</p>
+    <p>Completed Tasks: {{ completedTasks }}</p>
+    <p>Incomplete Tasks: {{ incompleteTasks }}</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      tasks: [
+        { id: 1, title: 'Task 1', completed: false },
+        { id: 2, title: 'Task 2', completed: true },
+        // Add more tasks as needed
+      ],
+      newTask: { title: '', completed: false }
+    },
+    computed: {
+      completedTasks() {
+        return this.tasks.filter(task => task.completed).length;
+      },
+      incompleteTasks() {
+        return this.tasks.filter(task => !task.completed).length;
+      },
+      filteredTasks() {
+        // Separate completed and incomplete tasks
+        return this.tasks;
+      }
+    },
+    methods: {
+      addTask() {
+        // Add new task to the task list
+        this.tasks.push({
+          id: this.tasks.length + 1,
+          title: this.newTask.title,
+          completed: this.newTask.completed
+        });
+
+        // Clear the form
+        this.newTask.title = '';
+        this.newTask.completed = false;
+      },
+      toggleCompletion(taskId) {
+        // Toggle completion status of a task
+        const taskIndex = this.tasks.findIndex(task => task.id === taskId);
+        if (taskIndex !== -1) {
+          this.tasks[taskIndex].completed = !this.tasks[taskIndex].completed;
+        }
+      }
+    },
+    watch: {
+      tasks: {
+        handler(newVal, oldVal) {
+          console.log('Task list modified:', newVal);
+        },
+        deep: true
+      }
+    },
+    created() {
+      // Fetch initial data or perform setup operations
+    }
+  });
+</script>
+</body>
+</html>

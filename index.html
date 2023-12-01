@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile Dashboard</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+<div id="app">
+  <h1>Leetcode</h1>
+
+  <div v-if="user">
+    <div class="box" style="gap:20px">
+      <div>
+        <img :src="user.profilePicture" alt="Profile Picture" style="width: 100px; height: 100px; border-radius: 10px;">
+      </div>
+      <div>
+        <p>Name: {{ user.name }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Age: {{ calculateAge }}</p>
+        <p>Solved: 350</p>
+      </div>
+    </div>
+    <div>
+      <p>{{ greetingMessage }}</p>
+    </div>
+    <div>
+      <h2>Edit Profile</h2>
+      <form @submit.prevent="updateProfile">
+        <label>Name: <input v-model="user.name" /></label>
+        <label>Email: <input v-model="user.email" /></label>
+        <label>Birthdate: <input type="date" v-model="user.birthdate" /></label>
+        <button type="submit">Save</button>
+      </form>
+    </div>
+  </div>
+
+  <div v-else>
+    <p>Loading user data...</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      user: null
+    },
+    created() {
+      this.fetchUserData();
+    },
+    methods: {
+      fetchUserData() {
+        setTimeout(() => {
+          this.user = {
+            name: 'Nuraskhan Aldongarov',
+            email: 'nuras@gmail.com',
+            profilePicture: 'https://assets.leetcode.com/users/avatars/avatar_1695376351.png', // Replace with actual profile picture URL
+            isAdmin: false,
+            birthdate: '2005-02-28'
+          };
+        }, 1000);
+      },
+      updateProfile() {
+        console.log('Profile updated:', this.user);
+      }
+    },
+    computed: {
+      greetingMessage() {
+        return this.user.isAdmin ? 'Hello Admin!' : 'Hello User!';
+      },
+      calculateAge() {
+        const birthdate = new Date(this.user.birthdate);
+        const today = new Date();
+        return Math.floor((today - birthdate) / (365.25 * 24 * 60 * 60 * 1000));
+      }
+    },
+    watch: {
+      user: {
+        handler(newVal, oldVal) {
+          console.log('User details modified:', newVal);
+        },
+        deep: true
+      }
+    }
+  });
+</script>
+</body>
+</html>
